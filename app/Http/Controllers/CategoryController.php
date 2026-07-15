@@ -2,89 +2,180 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Repositories\Category\CategoryRepositoryInterface;
-use Illuminate\Support\Facades\Log;
-use App\Http\Traits\ApiResponseTrait;
 use App\Http\Requests\Category\StoreCategoryRequest;
+use App\Http\Traits\ApiResponseTrait;
 use App\Http\Traits\HandlesImagesTrait;
-use Illuminate\Support\Str;
+use App\Http\Traits\ResolvesIndexFiltersTrait;
 use App\Models\Category;
+use App\Repositories\Category\CategoryRepositoryInterface;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class CategoryController extends Controller
 {
-    use ApiResponseTrait, HandlesImagesTrait;
-        public function __construct(protected CategoryRepositoryInterface $categoryRepository) {}
+    use ApiResponseTrait, HandlesImagesTrait, ResolvesIndexFiltersTrait;
 
-        public function index(Request $request)
+    public function __construct(
+        protected CategoryRepositoryInterface $categoryRepository
+    ) {}
+
+
+    public function getCategoriesByLevelForClient($level)
     {
         try {
-            $perPage = (int) $request->input('pageSize', 10);
-            $search = $request->input('searchValue', '');
-            $sort = $request->input('sort', 'desc');
-            $sortColumn = $request->input('column', 'id');
-
-            $data = $this->categoryRepository->index($search, $perPage, $sort, $sortColumn);
-            return $this->successResponse($data);
+            $categories = $this->categoryRepository->getCategoriesByLevelForClient($level);
+            return $this->successResponse($categories);
         } catch (\Exception $e) {
-            Log::error('Error getting Park:', ['error' => $e->getMessage()]);
+            Log::error('Error getting categories by level for client:', ['error' => $e->getMessage()]);
             return $this->errorResponse('An unexpected error occurred. Please try again later.');
         }
     }
 
+    /**
+     * Display a listing of categories.
+     */
+    public function index(Request $request)
+    {
+        try {
+            $filters = $this->getIndexFilters($request);
+
+            $categories = $this->categoryRepository->index($filters);
+
+            return $this->successResponse($categories);
+        } catch (\Throwable $e) {
+            Log::error('Error fetching categories.', [
+                'message' => $e->getMessage(),
+            ]);
+
+            return $this->errorResponse(
+                'An unexpected error occurred. Please try again later.'
+            );
+        }
+    }
+
+    /**
+     * Store a newly created category.
+     */
     public function store(StoreCategoryRequest $request)
     {
         try {
             $data = $request->validated();
-            $data['image'] = $request->hasFile('image')
-                ? $this->handleImageUpload($request, 'image', 'uploads/category')
-                : null;
+
+            if ($request->hasFile('image')) {
+                $data['image'] = $this->handleImageUpload(
+                    $request,
+                    'image',
+                    'uploads/category'
+                );
+            }
+
             $data['slug'] = Str::slug($data['name']);
+
             $category = $this->categoryRepository->store($data);
-            return $this->successResponse($category, 'Category created successfully.');
-        } catch (\Exception $e) {
-            Log::error('Error creating Category:', ['error' => $e->getMessage()]);
-            return $this->errorResponse('An unexpected error occurred. Please try again later.');
+
+            return $this->successResponse(
+                $category,
+                'Category created successfully.'
+            );
+        } catch (\Throwable $e) {
+            Log::error('Error creating category.', [
+                'message' => $e->getMessage(),
+            ]);
+
+            return $this->errorResponse(
+                'An unexpected error occurred. Please try again later.'
+            );
         }
     }
 
-    public function update(StoreCategoryRequest $request,Category $category)
+    /**
+     * Display the specified category.
+     */
+    public function show(Category $category)
+    {
+        try {
+            return $this->successResponse(
+                $this->categoryRepository->find($category)
+            );
+        } catch (\Throwable $e) {
+            Log::error('Error fetching category.', [
+                'message' => $e->getMessage(),
+            ]);
+
+            return $this->errorResponse(
+                'An unexpected error occurred. Please try again later.'
+            );
+        }
+    }
+
+    /**
+     * Update the specified category.
+     */
+    public function update(StoreCategoryRequest $request, Category $category)
     {
         try {
             $data = $request->validated();
+
             if ($request->hasFile('image')) {
+
                 if ($category->image) {
                     $this->deleteImage('', $category->image);
                 }
-                $data['image'] = $this->handleImageUpload($request, 'image', 'uploads/category');
+
+                $data['image'] = $this->handleImageUpload(
+                    $request,
+                    'image',
+                    'uploads/category'
+                );
             }
+
             $data['slug'] = Str::slug($data['name']);
-            $this->categoryRepository->update($category, $data);
-            return $this->successResponse($category, 'Category updated successfully.');
-        } catch (\Exception $e) {
-            Log::error('Error updating Category:', ['error' => $e->getMessage()]);
-            return $this->errorResponse('An unexpected error occurred. Please try again later.');
+
+            $category = $this->categoryRepository->update(
+                $category,
+                $data
+            );
+
+            return $this->successResponse(
+                $category,
+                'Category updated successfully.'
+            );
+        } catch (\Throwable $e) {
+            Log::error('Error updating category.', [
+                'message' => $e->getMessage(),
+            ]);
+
+            return $this->errorResponse(
+                'An unexpected error occurred. Please try again later.'
+            );
         }
     }
 
-        public function show(Category $category)
-    {
-        return $this->successResponse(
-            $this->categoryRepository->find($category)
-        );
-    }
-
+    /**
+     * Remove the specified category.
+     */
     public function destroy(Category $category)
     {
         try {
-            if (!empty($category['image'])) {
+            if ($category->image) {
                 $this->deleteImage('', $category->image);
             }
+
             $this->categoryRepository->delete($category);
-            return $this->successResponse("", 'Category deleted successfully.');
-        } catch (\Exception $e) {
-            Log::error('Error deleting Category:', ['error' => $e->getMessage()]);
-            return $this->errorResponse('An unexpected error occurred. Please try again later.');
+
+            return $this->successResponse(
+                "",
+                'Category deleted successfully.'
+            );
+        } catch (\Throwable $e) {
+            Log::error('Error deleting category.', [
+                'message' => $e->getMessage(),
+            ]);
+
+            return $this->errorResponse(
+                'An unexpected error occurred. Please try again later.'
+            );
         }
     }
 }

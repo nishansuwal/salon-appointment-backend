@@ -10,13 +10,15 @@ use App\Http\Middleware\UserMiddleware;
 use App\Http\Middleware\AdminMiddleware;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Validation\ValidationException;
 
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
-        web: __DIR__.'/../routes/web.php',
-        api: __DIR__.'/../routes/api.php',
-        commands: __DIR__.'/../routes/console.php',
+        web: __DIR__ . '/../routes/web.php',
+        api: __DIR__ . '/../routes/api.php',
+        commands: __DIR__ . '/../routes/console.php',
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
@@ -38,7 +40,16 @@ return Application::configure(basePath: dirname(__DIR__))
                 'message' => 'Unauthenticated.'
             ], Response::HTTP_UNAUTHORIZED);
         });
-        
+
+        $exceptions->render(function (ValidationException $e, $request) {
+            if ($request->expectsJson() || $request->is('api/*')) {
+                return response()->json([
+                    'message' => 'The given data was invalid.',
+                    'errors' => $e->errors(),
+                ], Response::HTTP_UNPROCESSABLE_ENTITY);
+            }
+        });
+
         $exceptions->render(function (ModelNotFoundException $e, $request) {
             $modelClass = class_basename($e->getModel());
             return response()->json([
@@ -50,6 +61,14 @@ return Application::configure(basePath: dirname(__DIR__))
             return response()->json([
                 'message' => 'Resource not found.'
             ], Response::HTTP_NOT_FOUND);
-        }); 
+        });
+
+        $exceptions->render(function (AuthorizationException $e, $request) {
+            if ($request->expectsJson() || $request->is('api/*')) {
+                return response()->json([
+                    'message' => 'You are not authorized to perform this action.',
+                ], Response::HTTP_FORBIDDEN);
+            }
+        });
     })
     ->create();

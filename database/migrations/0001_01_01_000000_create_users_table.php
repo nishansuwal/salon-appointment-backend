@@ -19,8 +19,10 @@ return new class extends Migration
             $table->string('password');
             $table->string('phone');
             $table->string('role')->default('user');   //user,admin,staff
+            $table->string('avatar')->nullable();
             $table->rememberToken();
             $table->timestamps();
+            $table->softDeletes();
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {

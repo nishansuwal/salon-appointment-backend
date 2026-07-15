@@ -7,11 +7,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable, HasApiTokens;
+    use HasFactory, Notifiable, HasApiTokens, SoftDeletes;
 
     /**
      * The attributes that are mass assignable.
@@ -23,6 +24,8 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'avatar',
+
     ];
 
     /**
@@ -47,14 +50,14 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
-    
-    public function addresses()
-    {
-        return $this->hasMany(Address::class);
-    }
 
     public function isAdmin(): bool
     {
         return $this->role === 'admin';
+    }
+
+    public function isStaff(): bool
+    {
+        return $this->role === 'staff';
     }
 }

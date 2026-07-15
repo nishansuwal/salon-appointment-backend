@@ -5,7 +5,7 @@ namespace App\Http\Requests\Category;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
-use Illuminate\Validation\Rule; 
+use Illuminate\Validation\Rule;
 use App\Http\Traits\ApiResponseTrait;
 
 class StoreCategoryRequest extends FormRequest
@@ -26,7 +26,11 @@ class StoreCategoryRequest extends FormRequest
                 'max:25',
                 Rule::unique('categories', 'name')->ignore($this->category->id ?? null),
             ],
-            'description' => 'nullable|string',
+            'parent_id' => [
+                'nullable',
+                'exists:categories,id',
+            ],
+            'level' => 'required|in:main,child',
             'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'is_active' => 'required|boolean',
         ];

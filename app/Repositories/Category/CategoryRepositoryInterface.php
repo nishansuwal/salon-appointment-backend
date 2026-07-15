@@ -6,9 +6,11 @@ use App\Models\Category;
 
 interface CategoryRepositoryInterface
 {
+    public function getCategoriesByLevelForClient($level);
+
     public function store(array $data): Category;
 
-    public function index($search, $perPage, $sort, $sortColumn);
+    public function index(array $filters);
 
     public function find($category);
 
