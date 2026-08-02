@@ -10,7 +10,7 @@ class Appointment extends Model
 {
     protected $fillable = [
         'user_id',
-        'staff_id',
+        'appointment_code',
         'appointment_date',
         'start_time',
         'end_time',
@@ -25,7 +25,9 @@ class Appointment extends Model
         'appointment_date' => 'date',
         'start_time' => 'datetime:H:i',
         'end_time' => 'datetime:H:i',
-        'total_price' => 'decimal:2',
+        'subtotal' => 'decimal:2',
+        'discount' => 'decimal:2',
+        'total' => 'decimal:2',
     ];
 
     /**
@@ -34,14 +36,6 @@ class Appointment extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
-    }
-
-    /**
-     * Staff assigned to the appointment.
-     */
-    public function staff(): BelongsTo
-    {
-        return $this->belongsTo(StaffProfile::class, 'staff_id');
     }
 
     /**
