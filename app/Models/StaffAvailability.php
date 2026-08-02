@@ -4,16 +4,20 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Builder;
 
 class StaffAvailability extends Model
 {
-    public $timestamps = false;
-
     protected $fillable = [
         'staff_id',
         'day_of_week',
         'start_time',
         'end_time',
+    ];
+
+    protected $casts = [
+        'start_time' => 'datetime:H:i',
+        'end_time' => 'datetime:H:i',
     ];
 
     /**
@@ -27,7 +31,7 @@ class StaffAvailability extends Model
     /**
      * Scope a query to filter by a specific day.
      */
-    public function scopeOnDay($query, $day)
+    public function scopeOnDay(Builder $query, string $day)
     {
         return $query->where('day_of_week', $day);
     }

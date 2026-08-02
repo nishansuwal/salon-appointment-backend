@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class StaffProfile extends Model
 {
@@ -14,7 +15,6 @@ class StaffProfile extends Model
     protected $fillable = [
         'user_id',
         'position',
-        'specialization',
         'avg_rating',
         'experience',
         'bio',
@@ -61,5 +61,23 @@ class StaffProfile extends Model
     public function scopeActive($query)
     {
         return $query->where('is_active', true);
+    }
+
+    public function categories(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            Category::class,
+            'staff_category',
+            'staff_id',
+            'category_id'
+        );
+    }
+
+    public function appointmentServices(): HasMany
+    {
+        return $this->hasMany(
+            AppointmentService::class,
+            'staff_id'
+        );
     }
 }
