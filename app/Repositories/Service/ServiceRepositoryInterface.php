@@ -2,17 +2,6 @@
 
 namespace App\Repositories\Service;
 
-use App\Models\Service;
+use App\Repositories\Contracts\CrudRepositoryInterface;
 
-interface ServiceRepositoryInterface
-{
-    public function getAll();
-
-    public function find(int $id);
-
-    public function create(array $data);
-
-    public function update(Service $service, array $data);
-
-    public function delete(Service $service);
-}
+interface ServiceRepositoryInterface extends CrudRepositoryInterface {}

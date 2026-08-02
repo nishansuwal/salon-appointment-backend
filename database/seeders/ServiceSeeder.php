@@ -131,7 +131,6 @@ class ServiceSeeder extends Seeder
                 'description' => $service['description'],
                 'duration_minutes' => $service['duration'],
                 'price' => $service['price'],
-                'is_active' => true,
             ]);
         }
     }
