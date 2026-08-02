@@ -22,6 +22,15 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->redirectGuestsTo(function ($request) {
+            // For API requests, don't redirect to login.
+            if ($request->expectsJson() || $request->is('api/*')) {
+                return null;
+            }
+
+            return route('login');
+        });
+
         $middleware->api([
             'throttle:api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,

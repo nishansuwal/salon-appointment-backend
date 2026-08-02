@@ -12,7 +12,7 @@ class UserMiddleware
     {
         $user = $request->user();
 
-        if (! $user || ! ($user->role === 'user' || $user->role === 'admin')) {
+        if (! $user || ($user->role !== 'user' && $user->role !== 'admin')) {
             return response()->json([
                 'message' => 'Forbidden.',
             ], Response::HTTP_FORBIDDEN);

@@ -12,7 +12,7 @@ class StaffMiddleware
     {
         $user = $request->user();
 
-        if (! $user || !( $user->role === 'staff' || $user->role === 'admin')) {
+        if (! $user || ($user->role !== 'staff' && $user->role !== 'admin')) {
             return response()->json([
                 'message' => 'Forbidden.',
             ], Response::HTTP_FORBIDDEN);
