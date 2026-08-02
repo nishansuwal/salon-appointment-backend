@@ -16,7 +16,6 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->string('position')->nullable();
-            $table->string('specialization')->nullable();
             $table->float('avg_rating')->default(0);
             $table->integer('experience')->default(0);
             $table->text('bio')->nullable();

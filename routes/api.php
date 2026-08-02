@@ -5,16 +5,17 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\LogoutController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Auth\RefreshTokenController;
+use App\Http\Controllers\Auth\ProfileController;
 
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ServiceController;
-use App\Http\Controllers\StaffController;
+use App\Http\Controllers\StaffProfileController;
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\FaqController;
-use App\Http\Controllers\AddressController;
+// use App\Http\Controllers\AddressController;
 use App\Http\Controllers\StaffAvailabilityController;
 use App\Http\Controllers\StaffLeaveController;
 
@@ -32,6 +33,13 @@ use App\Http\Controllers\StaffLeaveController;
 // └── Models/
 //     └── Service.php
 
+// variables should be camelCase
+//Database columns should be in snake_case
+//Route should be in kebab-case
+
+// php artisan migrate:fresh --seed
+
+//
 /*
 |--------------------------------------------------------------------------
 | Public Routes
@@ -48,13 +56,18 @@ Route::get('/category-level/{level}', [CategoryController::class, 'getCategories
 Route::get('/services', [ServiceController::class, 'index']);
 Route::get('/services/{service}', [ServiceController::class, 'show']);
 
-// Route::get('/staff', [StaffController::class, 'index']);
-// Route::get('/staff/{staff}', [StaffController::class, 'show']);
+Route::get('/staffs', [StaffProfileController::class, 'index']);
+Route::get('/staff/{staff}', [StaffProfileController::class, 'show'])->whereNumber('staff');;
 
-// Route::get('/gallery', [GalleryController::class, 'index']);
-// Route::get('/faqs', [FaqController::class, 'index']);
+Route::get('/gallery', [GalleryController::class, 'index']);
+Route::get('/faqs', [FaqController::class, 'index']);
 
 Route::get('/reviews', [ReviewController::class, 'index']);
+
+Route::post(
+    'available-staff',
+    [StaffProfileController::class, 'availableStaff']
+);
 
 
 /*
@@ -67,8 +80,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/logout', [LogoutController::class, 'logout']);
 
-    Route::get('/profile', [UserController::class, 'profile']);
-    Route::put('/profile', [UserController::class, 'updateProfile']);
+    Route::get('/profile', [ProfileController::class, 'show']);
+    Route::put('/profile', [ProfileController::class, 'update']);
 
 
     /*
@@ -77,20 +90,33 @@ Route::middleware('auth:sanctum')->group(function () {
     |--------------------------------------------------------------------------
     */
 
-    // Route::middleware('user.middleware')->group(function () {
+    Route::middleware('user.middleware')->group(function () {
 
-    //     Route::apiResource('appointments', AppointmentController::class);
 
-    //     Route::post(
-    //         'appointments/{appointment}/cancel',
-    //         [AppointmentController::class, 'cancel']
-    //     );
+        Route::post(
+            'appointments/{appointment}/cancel',
+            [AppointmentController::class, 'cancel']
+        );
 
-    //     Route::post(
-    //         'appointments/{appointment}/review',
-    //         [ReviewController::class, 'store']
-    //     );
-    // });
+        Route::post(
+            'appointments/review',
+            [ReviewController::class, 'store']
+        );
+
+        Route::get(
+            '/user/appointments',
+            [AppointmentController::class, 'getUserAppointments']
+        );
+        Route::post(
+            '/user/appointments',
+            [AppointmentController::class, 'store']
+        );
+
+        Route::get(
+            '/user/appointments/{appointment}',
+            [AppointmentController::class, 'userShow']
+        );
+    });
 
     /*
     |--------------------------------------------------------------------------
@@ -98,27 +124,37 @@ Route::middleware('auth:sanctum')->group(function () {
     |--------------------------------------------------------------------------
     */
 
-    // Route::middleware('staff.middleware')->group(function () {
+    Route::middleware('staff.middleware')->group(function () {
 
-    //     Route::get('/staff/dashboard', [StaffController::class, 'dashboard']);
+        // Route::get('/staff/dashboard', [StaffProfileController::class, 'dashboard']);
 
-    //     Route::get('/staff/appointments', [AppointmentController::class, 'staffAppointments']);
+        Route::get('/staff/appointments', [AppointmentController::class, 'staffAppointments']);
 
-    //     Route::patch(
-    //         '/staff/appointments/{appointment}/status',
-    //         [AppointmentController::class, 'updateStatus']
-    //     );
+        Route::patch(
+            '/staff/appointments/{appointment}/status',
+            [AppointmentController::class, 'updateStatus']
+        );
 
-    //     Route::apiResource(
-    //         'staff-availability',
-    //         StaffAvailabilityController::class
-    //     );
+        Route::get(
+            '/staff/appointments/{appointment}',
+            [AppointmentController::class, 'staffShow']
+        );
 
-    //     Route::apiResource(
-    //         'staff-leaves',
-    //         StaffLeaveController::class
-    //     );
-    // });
+        Route::apiResource(
+            'staff/availability',
+            StaffAvailabilityController::class
+        );
+
+        Route::get(
+            'staff/leaves',
+            [StaffLeaveController::class, 'staffIndex']
+        );
+
+        Route::post(
+            'staff/leaves',
+            [StaffLeaveController::class, 'store']
+        );
+    });
 
     /*
     |--------------------------------------------------------------------------
@@ -126,32 +162,57 @@ Route::middleware('auth:sanctum')->group(function () {
     |--------------------------------------------------------------------------
     */
 
-    // Route::middleware('admin.middleware')->group(function () {
+    Route::middleware('admin.middleware')->group(function () {
 
-    //     Route::get('/admin/dashboard', [UserController::class, 'dashboard']);
+        // Route::get('/admin/dashboard', [UserController::class, 'dashboard']);
 
         Route::apiResource('categories', CategoryController::class);
 
-    Route::apiResource('services', ServiceController::class);
+        Route::apiResource('services', ServiceController::class)->except('index', 'show');
 
-    //     Route::apiResource('staff', StaffController::class);
+        Route::apiResource('staffs', StaffProfileController::class)->except('index', 'show');;
 
-    //     Route::apiResource('users', UserController::class);
+        Route::apiResource('users', UserController::class);
 
-    //     Route::apiResource('gallery', GalleryController::class);
+        Route::apiResource('gallery', GalleryController::class)->except('index');
 
-    //     Route::apiResource('faqs', FaqController::class);
+        Route::apiResource('faqs', FaqController::class)->except('index');
 
-    //     Route::apiResource('reviews', ReviewController::class);
+        Route::apiResource('reviews', ReviewController::class);
 
-    //     Route::get(
-    //         '/appointments/all',
-    //         [AppointmentController::class, 'index']
-    //     );
+        Route::get(
+            '/appointments/all',
+            [AppointmentController::class, 'index']
+        );
 
-    //     Route::patch(
-    //         '/appointments/{appointment}/status',
-    //         [AppointmentController::class, 'updateStatus']
-    //     );
-    // });
+        Route::patch(
+            '/appointments/{appointment}/status',
+            [AppointmentController::class, 'updateStatus']
+        );
+
+        Route::get(
+            '/appointments/{appointment}',
+            [AppointmentController::class, 'show']
+        );
+
+        Route::get(
+            'availability/staff',
+            [StaffAvailabilityController::class, 'adminIndex']
+        );
+
+        Route::get(
+            'leaves',
+            [StaffLeaveController::class, 'adminIndex']
+        );
+
+        Route::patch(
+            'leaves/{id}/approve',
+            [StaffLeaveController::class, 'approve']
+        );
+
+        Route::patch(
+            'leaves/{id}/reject',
+            [StaffLeaveController::class, 'reject']
+        );
+    });
 });

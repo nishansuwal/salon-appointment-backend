@@ -13,7 +13,7 @@ class SettingSeeder extends Seeder
     public function run(): void
     {
         Setting::create([
-            'salon_name'   => 'Glamour Salon',
+            'name'         => 'Glamour Salon',
             'email'        => 'info@glamoursalon.com',
             'phone'        => '+977-9800000000',
             'address'      => 'Bhaktapur, Nepal',

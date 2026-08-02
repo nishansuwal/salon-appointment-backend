@@ -15,11 +15,23 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
         User::factory()->create([
             'name' => 'User',
             'email' => 'user123@gmail.com',
+            'password' => bcrypt('user123'),
+            'phone' => '1234567890',
+            'role' => 'user',
+        ]);
+        User::factory()->create([
+            'name' => 'User2',
+            'email' => 'user1234@gmail.com',
+            'password' => bcrypt('user123'),
+            'phone' => '1234567890',
+            'role' => 'user',
+        ]);
+        User::factory()->create([
+            'name' => 'User3',
+            'email' => 'user12345@gmail.com',
             'password' => bcrypt('user123'),
             'phone' => '1234567890',
             'role' => 'user',
@@ -38,6 +50,14 @@ class DatabaseSeeder extends Seeder
             'phone' => '1234567890',
             'role' => 'staff',
         ]);
+        User::factory()->create([
+            'name' => 'Staff2',
+            'email' => 'staff1234@gmail.com',
+            'password' => bcrypt('staff123'),
+            'phone' => '1234567890',
+            'role' => 'staff',
+        ]);
+         User::factory(10)->create();
 
         $this->call([
             CategorySeeder::class,
