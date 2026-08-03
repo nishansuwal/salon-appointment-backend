@@ -3,14 +3,13 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Category extends Model
 {
-    use SoftDeletes;
-
     protected $fillable = [
         'parent_id',
         'name',
@@ -25,8 +24,15 @@ class Category extends Model
      */
     protected $casts = [
         'is_active' => 'boolean',
-        'deleted_at' => 'datetime',
     ];
+
+    protected static function booted(): void
+    {
+        static::saving(function (Category $category) {
+            $category->slug = Str::slug($category->name);
+            $category->level = $category->parent_id ? 'child' : 'main';
+        });
+    }
 
     /**
      * Get the parent category.
@@ -50,5 +56,15 @@ class Category extends Model
     public function services(): HasMany
     {
         return $this->hasMany(Service::class);
+    }
+
+    public function staff(): BelongsToMany
+    {
+        return $this->belongsToMany(
+            StaffProfile::class,
+            'staff_category',
+            'category_id',
+            'staff_id'
+        );
     }
 }

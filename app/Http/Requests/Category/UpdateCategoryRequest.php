@@ -5,7 +5,7 @@ namespace App\Http\Requests\Category;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
-class StoreCategoryRequest extends FormRequest
+class UpdateCategoryRequest extends FormRequest
 {
     public function authorize(): bool
     {
@@ -14,28 +14,23 @@ class StoreCategoryRequest extends FormRequest
 
     public function rules(): array
     {
+        $category = $this->route('category');
+
         return [
             'name' => [
-                'required',
+                'sometimes',
                 'string',
                 'max:25',
-                Rule::unique('categories', 'name'),
+                Rule::unique('categories', 'name')->ignore($category?->id),
             ],
             'parent_id' => [
+                'sometimes',
                 'nullable',
                 Rule::exists('categories', 'id')->where('level', 'main'),
+                Rule::notIn([$category?->id]),
             ],
-            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
+            'image' => ['sometimes', 'nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
             'is_active' => ['sometimes', 'boolean'],
         ];
-    }
-
-    protected function prepareForValidation(): void
-    {
-        if ($this->has('is_active')) {
-            $this->merge([
-                'is_active' => filter_var($this->is_active, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE) ?? true,
-            ]);
-        }
     }
 }

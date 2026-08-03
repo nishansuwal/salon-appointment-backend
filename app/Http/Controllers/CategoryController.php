@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Category\StoreCategoryRequest;
+use App\Http\Requests\Category\UpdateCategoryRequest;
 use App\Http\Traits\ApiResponseTrait;
 use App\Http\Traits\HandlesImagesTrait;
 use App\Http\Traits\ResolvesIndexFiltersTrait;
@@ -10,7 +11,6 @@ use App\Models\Category;
 use App\Repositories\Category\CategoryRepositoryInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 
 class CategoryController extends Controller
 {
@@ -20,14 +20,15 @@ class CategoryController extends Controller
         protected CategoryRepositoryInterface $categoryRepository
     ) {}
 
-
     public function getCategoriesByLevelForClient($level)
     {
         try {
             $categories = $this->categoryRepository->getCategoriesByLevelForClient($level);
+
             return $this->successResponse($categories);
         } catch (\Exception $e) {
             Log::error('Error getting categories by level for client:', ['error' => $e->getMessage()]);
+
             return $this->errorResponse('An unexpected error occurred. Please try again later.');
         }
     }
@@ -70,8 +71,6 @@ class CategoryController extends Controller
                 );
             }
 
-            $data['slug'] = Str::slug($data['name']);
-
             $category = $this->categoryRepository->store($data);
 
             return $this->successResponse(
@@ -112,7 +111,7 @@ class CategoryController extends Controller
     /**
      * Update the specified category.
      */
-    public function update(StoreCategoryRequest $request, Category $category)
+    public function update(UpdateCategoryRequest $request, Category $category)
     {
         try {
             $data = $request->validated();
@@ -129,8 +128,6 @@ class CategoryController extends Controller
                     'uploads/category'
                 );
             }
-
-            $data['slug'] = Str::slug($data['name']);
 
             $category = $this->categoryRepository->update(
                 $category,
@@ -165,7 +162,7 @@ class CategoryController extends Controller
             $this->categoryRepository->delete($category);
 
             return $this->successResponse(
-                "",
+                '',
                 'Category deleted successfully.'
             );
         } catch (\Throwable $e) {

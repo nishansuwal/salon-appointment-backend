@@ -3,18 +3,19 @@
 namespace App\Repositories\Category;
 
 use App\Models\Category;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 interface CategoryRepositoryInterface
 {
-    public function getCategoriesByLevelForClient($level);
+    public function getCategoriesByLevelForClient(string $level);
 
     public function store(array $data): Category;
 
-    public function index(array $filters);
+    public function index(array $filters = [], array $options = []): LengthAwarePaginator;
 
-    public function find($category);
+    public function find(Category $category): Category;
 
-    public function update($category, array $data);
+    public function update(Category $category, array $data): Category;
 
-    public function delete($category);
+    public function delete(Category $category): bool;
 }
