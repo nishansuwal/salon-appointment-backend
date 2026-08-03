@@ -3,24 +3,29 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Http\Requests\Auth\RegisterRequest;
-use App\Models\User;
+use App\Http\Traits\ApiResponseTrait;
+use App\Repositories\User\UserRepositoryInterface;
+use Throwable;
 
 class RegisterController extends Controller
 {
+    use ApiResponseTrait;
+
+    public function __construct(
+        private readonly UserRepositoryInterface $userRepository
+    ) {}
+
     public function register(RegisterRequest $request)
     {
-        $validatedData = $request->validated();
-        $user = User::create([
-            'name' => $validatedData['name'],
-            'email' => $validatedData['email'],
-            'password' => bcrypt($validatedData['password']),
-            'role' => $validatedData['role'] ?? 'customer',
-        ]);
-        return response()->json([
-            'message' => 'User registered successfully',
-            'user' => $user,
-        ], 201);
+        try {
+            return $this->successResponse(
+                $this->userRepository->register($request->validated()),
+                'User registered successfully.',
+                201
+            );
+        } catch (Throwable $exception) {
+            return $this->handleException($exception, 'registering user');
+        }
     }
 }
