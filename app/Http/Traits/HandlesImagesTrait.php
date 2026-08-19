@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Carbon;
+use Illuminate\Http\UploadedFile;
 use File;
 
 trait HandlesImagesTrait
@@ -36,6 +37,23 @@ trait HandlesImagesTrait
         }
 
         return $oldImage;
+    }
+
+    public function uploadFile(
+        UploadedFile $file,
+        string $directory,
+        ?string $oldImage = null
+    ): string {
+        $current = now()->format('YmdHis');
+        $filename = $current . '_' . $file->getClientOriginalName();
+
+        $path = $file->storeAs($directory, $filename, 'public');
+
+        if ($oldImage) {
+            $this->deleteImage($directory, $oldImage);
+        }
+
+        return $path;
     }
 
     /**
