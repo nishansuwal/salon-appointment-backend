@@ -53,12 +53,4 @@ class Appointment extends Model
     {
         return $this->hasMany(AppointmentStatusHistory::class);
     }
-
-    /**
-     * Customer review.
-     */
-    public function review(): HasMany
-    {
-        return $this->hasMany(Review::class);
-    }
 }

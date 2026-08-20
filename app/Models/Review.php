@@ -11,10 +11,11 @@ class Review extends Model
      * The attributes that are mass assignable.
      */
     protected $fillable = [
-        'appointment_id',
+        'appointment_service_id',
         'user_id',
         'rating',
         'comment',
+        'status',
         'admin_note',
     ];
 
@@ -27,11 +28,11 @@ class Review extends Model
     ];
 
     /**
-     * Get the appointment that this review belongs to.
+     * Get the appointment service that this review belongs to.
      */
-    public function appointment(): BelongsTo
+    public function appointmentService(): BelongsTo
     {
-        return $this->belongsTo(Appointment::class);
+       return $this->belongsTo(AppointmentService::class, 'appointment_service_id');
     }
 
     /**

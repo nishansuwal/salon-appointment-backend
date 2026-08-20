@@ -13,15 +13,10 @@ class Setting extends Model
     protected $table = 'settings';
 
     /**
-     * Disable timestamps if you don't need them for settings.
-     */
-    public $timestamps = false;
-
-    /**
      * The attributes that are mass assignable.
      */
     protected $fillable = [
-        'salon_name',
+        'name',
         'email',
         'phone',
         'address',

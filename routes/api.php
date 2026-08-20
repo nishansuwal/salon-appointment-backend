@@ -62,7 +62,7 @@ Route::get('/staff/{staff}', [StaffProfileController::class, 'show'])->whereNumb
 Route::get('/gallery', [GalleryController::class, 'index']);
 Route::get('/faqs', [FaqController::class, 'index']);
 
-Route::get('/reviews', [ReviewController::class, 'index']);
+Route::get('/services/{service}/reviews', [ReviewController::class, 'serviceReviews']);
 
 Route::post(
     'available-staff',
@@ -98,10 +98,17 @@ Route::middleware('auth:sanctum')->group(function () {
             [AppointmentController::class, 'cancel']
         );
 
-        Route::post(
-            'appointments/review',
-            [ReviewController::class, 'store']
+        Route::get(
+            'reviews/my-reviews',
+            [ReviewController::class, 'myReviews']
         );
+        Route::get(
+            'services/{serviceId}/review-status',
+            [ReviewController::class, 'reviewStatus']
+        );
+
+        Route::apiResource('reviews', ReviewController::class)->except('index', 'show');
+
 
         Route::get(
             '/user/appointments',
@@ -178,7 +185,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
         Route::apiResource('faqs', FaqController::class)->except('index');
 
-        Route::apiResource('reviews', ReviewController::class);
+        Route::put('/reviews/updateStatus/{review}', [ReviewController::class, 'updateStatus']);
+        Route::get('/reviews', [ReviewController::class, 'index']);
+
 
         Route::get(
             '/appointments/all',

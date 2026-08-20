@@ -28,12 +28,31 @@ class RepositoryServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->bind(UserRepositoryInterface::class,UserRepository::class);
+        $this->app->bind(UserRepositoryInterface::class, UserRepository::class);
         $this->app->bind(CategoryRepositoryInterface::class, CategoryRepository::class);
         $this->app->bind(BrandRepositoryInterface::class, BrandRepository::class);
         $this->app->bind(AddressRepositoryInterface::class, AddressRepository::class);
         $this->app->bind(OrderRepositoryInterface::class, OrderRepository::class);
         $this->app->bind(ServiceRepositoryInterface::class, ServiceRepository::class);
+        $this->app->bind(ReviewRepositoryInterface::class, ReviewRepository::class);
+        foreach (
+            [
+                'ServiceImage',
+                'StaffProfile',
+                'StaffAvailability',
+                'StaffLeave',
+                'Appointment',
+                'AppointmentService',
+                'AppointmentStatusHistory',
+                'Gallery',
+                'Faq',
+                'Notification',
+                'Setting',
+            ] as $resource
+        ) {
+            $namespace = "App\\Repositories\\{$resource}\\{$resource}";
+            $this->app->bind("{$namespace}RepositoryInterface", "{$namespace}Repository");
+        }
     }
 
     /**

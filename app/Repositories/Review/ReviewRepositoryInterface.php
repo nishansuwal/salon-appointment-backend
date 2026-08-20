@@ -13,9 +13,13 @@ interface ReviewRepositoryInterface
 
     public function delete(Review $review): bool;
 
-    public function getAll(int $perPage = 15): LengthAwarePaginator;
+    public function getAll(array $filters = []): LengthAwarePaginator;
 
-    public function getByProduct(int $productId, int $perPage = 15): LengthAwarePaginator;
+    public function getByService(int $serviceId);
 
-    public function getByUser(int $userId, int $perPage = 15): LengthAwarePaginator;
+    public function reviewStatus(int $serviceId, int $userId);
+
+    public function getByUser(int $userId, int $perPage, ?string $status = null): LengthAwarePaginator;
+
+    public function getByStaff(int $staffId, int $perPage): LengthAwarePaginator;
 }

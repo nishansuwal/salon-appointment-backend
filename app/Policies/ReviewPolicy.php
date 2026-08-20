@@ -14,7 +14,12 @@ class ReviewPolicy
 
     public function update(User $user, Review $review): bool
     {
-        return $user->isAdmin();
+        if ($user->isAdmin()) {
+            return true;
+        }
+
+        return $user->id === $review->user_id
+            && $review->status === 'pending';
     }
 
     public function delete(User $user, Review $review): bool

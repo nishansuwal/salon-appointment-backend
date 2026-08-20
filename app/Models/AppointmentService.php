@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class AppointmentService extends Model
 {
@@ -40,5 +41,10 @@ class AppointmentService extends Model
     public function staff(): BelongsTo
     {
         return $this->belongsTo(StaffProfile::class, 'staff_id');
+    }
+
+    public function review(): HasOne
+    {
+        return $this->hasOne(Review::class);
     }
 }
