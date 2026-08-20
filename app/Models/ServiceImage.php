@@ -7,15 +7,12 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class ServiceImage extends Model
 {
-    // Disable timestamps if not needed, as these are usually managed by the service parent
-    public $timestamps = false;
-
     /**
      * The attributes that are mass assignable.
      */
     protected $fillable = [
         'service_id',
-        'image',
+        'image_path',
         'is_primary',
         'sort_order',
     ];

@@ -18,7 +18,6 @@ class Service extends Model
         'description',
         'duration_minutes',
         'price',
-        'is_active',
     ];
 
     /**
@@ -26,7 +25,6 @@ class Service extends Model
      */
     protected $casts = [
         'price' => 'decimal:2',
-        'is_active' => 'boolean',
         'duration_minutes' => 'integer',
         'deleted_at' => 'datetime',
     ];
@@ -45,13 +43,5 @@ class Service extends Model
     public function images(): HasMany
     {
         return $this->hasMany(ServiceImage::class);
-    }
-
-    /**
-     * Scope a query to only include active services.
-     */
-    public function scopeActive($query)
-    {
-        return $query->where('is_active', true);
     }
 }
