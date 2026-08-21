@@ -15,9 +15,34 @@ class CategoryRepository implements CategoryRepositoryInterface
                 'level' => 'Level must be either main or child.',
             ]);
         }
+
+        if ($level === 'main') {
+            return Category::with([
+                'children' => function ($query) {
+                    $query
+                        ->where('is_active', true)
+                        ->withCount('services')
+                        ->orderBy('name');
+                },
+            ])
+                ->where('is_active', true)
+                ->where('level', 'main')
+                ->withCount('services')
+                ->orderBy('name')
+                ->get()
+                ->map(function ($category) {
+                    $category->total_services = $category->children->sum(
+                        'services_count'
+                    );
+
+                    return $category;
+                });
+        }
+
         return Category::with('parent:id,name')
             ->where('is_active', true)
-            ->where('level', $level)
+            ->where('level', 'child')
+            ->withCount('services')
             ->orderBy('name')
             ->get();
     }
