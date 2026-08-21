@@ -32,7 +32,7 @@ class StaffProfileController extends AbstractCrudController
             repository: $this->repository,
             options: [
                 'with' => [
-                    'user:id,name,email,phone',
+                    'user:id,name,email,phone,avatar',
                     'categories:id,name,slug',
                 ],
                 'search' => [
@@ -55,7 +55,7 @@ class StaffProfileController extends AbstractCrudController
             repository: $this->repository,
             options: [
                 'with' => [
-                    'user:id,name,email,phone',
+                    'user:id,name,email,phone,avatar',
                     'categories:id,name,slug',
                     'availability',
                     'leaves',

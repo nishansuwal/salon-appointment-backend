@@ -18,6 +18,9 @@ return new class extends Migration
             $table->string('phone')->nullable();
             $table->string('address')->nullable();
             $table->string('logo')->nullable();
+            $table->string('title')->nullable();
+            $table->string('bio')->nullable();
+            $table->text('description')->nullable();
             $table->time('opening_time')->nullable();
             $table->time('closing_time')->nullable();
             $table->timestamps();

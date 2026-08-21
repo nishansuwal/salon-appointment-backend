@@ -15,6 +15,8 @@ use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\GalleryController;
 use App\Http\Controllers\FaqController;
+use App\Http\Controllers\SettingController;
+use App\Http\Controllers\TestimonialController;
 // use App\Http\Controllers\AddressController;
 use App\Http\Controllers\StaffAvailabilityController;
 use App\Http\Controllers\StaffLeaveController;
@@ -51,16 +53,18 @@ Route::post('/register', [RegisterController::class, 'register']);
 // Route::post('/refresh-token', [RefreshTokenController::class, 'refresh']);
 
 // Home page
+Route::get('/categories', [CategoryController::class, 'index']);
 Route::get('/category-level/{level}', [CategoryController::class, 'getCategoriesByLevelForClient']);
 
 Route::get('/services', [ServiceController::class, 'index']);
 Route::get('/services/{service}', [ServiceController::class, 'show']);
 
-Route::get('/staffs', [StaffProfileController::class, 'index']);
-Route::get('/staff/{staff}', [StaffProfileController::class, 'show'])->whereNumber('staff');;
+Route::apiResource('staffs', StaffProfileController::class)->only('index', 'show');
 
 Route::get('/gallery', [GalleryController::class, 'index']);
 Route::get('/faqs', [FaqController::class, 'index']);
+Route::get('/testimonials', [TestimonialController::class, 'index']);
+Route::get('/settings', [SettingController::class, 'show']);
 
 Route::get('/services/{service}/reviews', [ReviewController::class, 'serviceReviews']);
 
@@ -173,7 +177,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
         // Route::get('/admin/dashboard', [UserController::class, 'dashboard']);
 
-        Route::apiResource('categories', CategoryController::class);
+        Route::apiResource('categories', CategoryController::class)->except('index');
 
         Route::apiResource('services', ServiceController::class)->except('index', 'show');
 
@@ -183,7 +187,11 @@ Route::middleware('auth:sanctum')->group(function () {
 
         Route::apiResource('gallery', GalleryController::class)->except('index');
 
+        Route::apiResource('testimonials', TestimonialController::class)->except('index');
+
         Route::apiResource('faqs', FaqController::class)->except('index');
+
+        Route::put('/settings', [SettingController::class, 'update']);
 
         Route::put('/reviews/updateStatus/{review}', [ReviewController::class, 'updateStatus']);
         Route::get('/reviews', [ReviewController::class, 'index']);

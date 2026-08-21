@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\Gallery\StoreGalleryRequest;
-use App\Http\Requests\Gallery\UpdateGalleryRequest;
-use App\Repositories\Gallery\GalleryRepositoryInterface;
+use App\Http\Requests\Testimonial\StoreTestimonialRequest;
+use App\Http\Requests\Testimonial\UpdateTestimonialRequest;
+use App\Repositories\Testimonial\TestimonialRepositoryInterface;
 use App\Http\Traits\HandlesImagesTrait;
 
-class GalleryController extends AbstractCrudController
+class TestimonialController extends AbstractCrudController
 {
     use HandlesImagesTrait;
-    public function __construct(GalleryRepositoryInterface $repository)
+    public function __construct(TestimonialRepositoryInterface $repository)
     {
         parent::__construct($repository);
     }
@@ -21,7 +21,7 @@ class GalleryController extends AbstractCrudController
     }
 
 
-    public function store(StoreGalleryRequest $request)
+    public function store(StoreTestimonialRequest $request)
     {
         $data = $request->validated();
 
@@ -29,29 +29,30 @@ class GalleryController extends AbstractCrudController
             $data['image'] = $this->handleImageUpload(
                 $request,
                 'image',
-                'uploads/gallery'
+                'uploads/testimonial'
             );
         }
         return $this->storeResource($data, $this->repository, $this->resourceName());
     }
-    public function update(UpdateGalleryRequest $request, int|string $id)
+
+    public function update(UpdateTestimonialRequest $request, int|string $id)
     {
         $data = $request->validated();
 
-        $gallery = $this->repository->findOrFail($id);
+        $testimonial = $this->repository->findOrFail($id);
 
         if ($request->hasFile('image')) {
             $data['image'] = $this->handleImageUpload(
                 $request,
                 'image',
-                'uploads/gallery',
-                $gallery->image
+                'uploads/testimonial',
+                $testimonial->image
             );
         }
         return $this->updateResource($id, $data, $this->repository, $this->resourceName());
     }
     protected function resourceName(): string
     {
-        return 'Gallery';
+        return 'testimonial';
     }
 }

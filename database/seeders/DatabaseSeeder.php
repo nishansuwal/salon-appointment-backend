@@ -57,7 +57,7 @@ class DatabaseSeeder extends Seeder
             'phone' => '1234567890',
             'role' => 'staff',
         ]);
-         User::factory(10)->create();
+        User::factory(10)->create();
 
         $this->call([
             CategorySeeder::class,
@@ -66,6 +66,7 @@ class DatabaseSeeder extends Seeder
             ServiceSeeder::class,
             StaffProfileSeeder::class,
             StaffAvailabilitySeeder::class,
+            TestimonialSeeder::class,
         ]);
     }
 }

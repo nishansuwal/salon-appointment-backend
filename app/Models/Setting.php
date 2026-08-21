@@ -21,6 +21,9 @@ class Setting extends Model
         'phone',
         'address',
         'logo',
+        'title',
+        'description',
+        'bio',
         'opening_time',
         'closing_time',
     ];
@@ -31,6 +34,6 @@ class Setting extends Model
      */
     public static function getConfiguration()
     {
-        return self::first() ?? new self();
+        return self::query()->first() ?? new self();
     }
 }

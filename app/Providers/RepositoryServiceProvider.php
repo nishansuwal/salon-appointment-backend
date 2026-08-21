@@ -14,6 +14,10 @@ use App\Repositories\Order\OrderRepository;
 use App\Repositories\Order\OrderRepositoryInterface;
 use App\Repositories\Review\ReviewRepository;
 use App\Repositories\Review\ReviewRepositoryInterface;
+use App\Repositories\Setting\SettingRepository;
+use App\Repositories\Setting\SettingRepositoryInterface;
+use App\Repositories\Testimonial\TestimonialRepositoryInterface;
+use App\Repositories\Testimonial\TestimonialRepository;
 
 use App\Repositories\Service\ServiceRepository;
 use App\Repositories\Service\ServiceRepositoryInterface;
@@ -35,6 +39,8 @@ class RepositoryServiceProvider extends ServiceProvider
         $this->app->bind(OrderRepositoryInterface::class, OrderRepository::class);
         $this->app->bind(ServiceRepositoryInterface::class, ServiceRepository::class);
         $this->app->bind(ReviewRepositoryInterface::class, ReviewRepository::class);
+        $this->app->bind(TestimonialRepositoryInterface::class, TestimonialRepository::class);
+        $this->app->bind(SettingRepositoryInterface::class, SettingRepository::class);
         foreach (
             [
                 'ServiceImage',
@@ -47,7 +53,6 @@ class RepositoryServiceProvider extends ServiceProvider
                 'Gallery',
                 'Faq',
                 'Notification',
-                'Setting',
             ] as $resource
         ) {
             $namespace = "App\\Repositories\\{$resource}\\{$resource}";
