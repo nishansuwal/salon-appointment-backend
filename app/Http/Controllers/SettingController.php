@@ -16,7 +16,12 @@ class SettingController extends Controller
 
     public function show()
     {
-        return response()->json($this->settingRepository->getConfiguration());
+        $setting = $this->settingRepository->getConfiguration();
+
+        return response()->json([
+            'message' => 'Settings fetched successfully.',
+            'data' => $setting,
+        ]);
     }
 
     public function update(UpdateSettingRequest $request)
