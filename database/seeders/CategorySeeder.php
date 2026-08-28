@@ -54,6 +54,7 @@ class CategorySeeder extends Seeder
             'name' => 'Hair Cut',
             'slug' => Str::slug('Hair Cut'),
             'parent_id' => $hair->id,
+            'level' => 'child',
             'is_active' => true,
         ]);
 
@@ -61,6 +62,7 @@ class CategorySeeder extends Seeder
             'name' => 'Hair Coloring',
             'slug' => Str::slug('Hair Coloring'),
             'parent_id' => $hair->id,
+            'level' => 'child',
             'is_active' => true,
         ]);
 
@@ -68,6 +70,7 @@ class CategorySeeder extends Seeder
             'name' => 'Hair Treatment',
             'slug' => Str::slug('Hair Treatment'),
             'parent_id' => $hair->id,
+            'level' => 'child',
             'is_active' => true,
         ]);
 
@@ -76,6 +79,7 @@ class CategorySeeder extends Seeder
             'name' => 'Manicure',
             'slug' => Str::slug('Manicure'),
             'parent_id' => $nails->id,
+            'level' => 'child',
             'is_active' => true,
         ]);
 
@@ -83,6 +87,7 @@ class CategorySeeder extends Seeder
             'name' => 'Pedicure',
             'slug' => Str::slug('Pedicure'),
             'parent_id' => $nails->id,
+            'level' => 'child',
             'is_active' => true,
         ]);
 
@@ -90,6 +95,7 @@ class CategorySeeder extends Seeder
             'name' => 'Nail Art',
             'slug' => Str::slug('Nail Art'),
             'parent_id' => $nails->id,
+            'level' => 'child',
             'is_active' => true,
         ]);
 
@@ -98,6 +104,7 @@ class CategorySeeder extends Seeder
             'name' => 'Body Massage',
             'slug' => Str::slug('Body Massage'),
             'parent_id' => $spa->id,
+            'level' => 'child',
             'is_active' => true,
         ]);
 
@@ -105,6 +112,7 @@ class CategorySeeder extends Seeder
             'name' => 'Aromatherapy',
             'slug' => Str::slug('Aromatherapy'),
             'parent_id' => $spa->id,
+            'level' => 'child',
             'is_active' => true,
         ]);
 
@@ -113,6 +121,7 @@ class CategorySeeder extends Seeder
             'name' => 'Basic Facial',
             'slug' => Str::slug('Basic Facial'),
             'parent_id' => $facial->id,
+            'level' => 'child',
             'is_active' => true,
         ]);
 
@@ -120,6 +129,7 @@ class CategorySeeder extends Seeder
             'name' => 'Gold Facial',
             'slug' => Str::slug('Gold Facial'),
             'parent_id' => $facial->id,
+            'level' => 'child',
             'is_active' => true,
         ]);
 
@@ -128,6 +138,7 @@ class CategorySeeder extends Seeder
             'name' => 'Bridal Makeup',
             'slug' => Str::slug('Bridal Makeup'),
             'parent_id' => $makeup->id,
+            'level' => 'child',
             'is_active' => true,
         ]);
 
@@ -135,6 +146,7 @@ class CategorySeeder extends Seeder
             'name' => 'Party Makeup',
             'slug' => Str::slug('Party Makeup'),
             'parent_id' => $makeup->id,
+            'level' => 'child',
             'is_active' => true,
         ]);
     }

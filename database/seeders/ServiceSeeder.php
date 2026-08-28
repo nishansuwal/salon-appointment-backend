@@ -22,6 +22,7 @@ class ServiceSeeder extends Seeder
                 'description' => 'Professional haircut for men.',
                 'duration' => 30,
                 'price' => 500,
+                'discount' => 5,
             ],
             [
                 'category' => 'Hair Cut',
@@ -29,6 +30,7 @@ class ServiceSeeder extends Seeder
                 'description' => 'Stylish haircut for women.',
                 'duration' => 60,
                 'price' => 1000,
+                'discount' => 10,
             ],
             [
                 'category' => 'Hair Coloring',
@@ -36,6 +38,7 @@ class ServiceSeeder extends Seeder
                 'description' => 'Full hair coloring with premium products.',
                 'duration' => 120,
                 'price' => 3500,
+                'discount' => 12,
             ],
             [
                 'category' => 'Hair Treatment',
@@ -43,6 +46,7 @@ class ServiceSeeder extends Seeder
                 'description' => 'Smooth and repair damaged hair.',
                 'duration' => 180,
                 'price' => 6000,
+                'discount' => 5,
             ],
 
             // Nails
@@ -52,6 +56,7 @@ class ServiceSeeder extends Seeder
                 'description' => 'Nail trimming, shaping, and polish.',
                 'duration' => 45,
                 'price' => 800,
+                'discount' => 14,
             ],
             [
                 'category' => 'Pedicure',
@@ -59,6 +64,7 @@ class ServiceSeeder extends Seeder
                 'description' => 'Foot care with massage and polish.',
                 'duration' => 60,
                 'price' => 1200,
+                'discount' => 6,
             ],
             [
                 'category' => 'Nail Art',
@@ -66,6 +72,7 @@ class ServiceSeeder extends Seeder
                 'description' => 'Creative nail art designs.',
                 'duration' => 60,
                 'price' => 1500,
+                'discount' => 2,
             ],
 
             // Spa
@@ -75,6 +82,7 @@ class ServiceSeeder extends Seeder
                 'description' => 'Relaxing full-body massage.',
                 'duration' => 90,
                 'price' => 3000,
+                'discount' => 8,
             ],
             [
                 'category' => 'Aromatherapy',
@@ -82,6 +90,7 @@ class ServiceSeeder extends Seeder
                 'description' => 'Essential oil therapy for relaxation.',
                 'duration' => 60,
                 'price' => 2500,
+                'discount' => 20,
             ],
 
             // Facial
@@ -91,6 +100,7 @@ class ServiceSeeder extends Seeder
                 'description' => 'Deep cleansing facial treatment.',
                 'duration' => 60,
                 'price' => 1800,
+                'discount' => 14,
             ],
             [
                 'category' => 'Gold Facial',
@@ -98,6 +108,7 @@ class ServiceSeeder extends Seeder
                 'description' => 'Premium gold facial for glowing skin.',
                 'duration' => 90,
                 'price' => 3500,
+                'discount' => 30,
             ],
 
             // Makeup
@@ -107,6 +118,7 @@ class ServiceSeeder extends Seeder
                 'description' => 'Complete bridal makeup service.',
                 'duration' => 180,
                 'price' => 15000,
+                'discount' => 25,
             ],
             [
                 'category' => 'Party Makeup',
@@ -114,6 +126,7 @@ class ServiceSeeder extends Seeder
                 'description' => 'Professional makeup for parties and events.',
                 'duration' => 90,
                 'price' => 4000,
+                'discount' => 4,
             ],
         ];
 
@@ -131,6 +144,8 @@ class ServiceSeeder extends Seeder
                 'description' => $service['description'],
                 'duration_minutes' => $service['duration'],
                 'price' => $service['price'],
+                'discount' => $service['discount'],
+                'status' => 'active',
             ]);
         }
     }

@@ -18,6 +18,8 @@ class Service extends Model
         'description',
         'duration_minutes',
         'price',
+        'discount',
+        'status',
     ];
 
     /**
@@ -25,8 +27,13 @@ class Service extends Model
      */
     protected $casts = [
         'price' => 'decimal:2',
+        'discount' => 'decimal:2',
         'duration_minutes' => 'integer',
         'deleted_at' => 'datetime',
+    ];
+
+    protected $appends = [
+        'staff',
     ];
 
     /**
@@ -43,5 +50,20 @@ class Service extends Model
     public function images(): HasMany
     {
         return $this->hasMany(ServiceImage::class);
+    }
+
+    public function getStaffAttribute()
+    {
+        if (!$this->category) {
+            return collect();
+        }
+
+        // Service belongs to child category
+        if ($this->category->parent_id) {
+            return $this->category->parent?->staff ?? collect();
+        }
+
+        // Service belongs directly to main category
+        return $this->category->staff;
     }
 }

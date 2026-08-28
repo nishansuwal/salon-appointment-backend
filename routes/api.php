@@ -56,7 +56,7 @@ Route::post('/register', [RegisterController::class, 'register']);
 Route::get('/categories', [CategoryController::class, 'index']);
 Route::get('/category-level/{level}', [CategoryController::class, 'getCategoriesByLevelForClient']);
 
-Route::get('/services', [ServiceController::class, 'index']);
+Route::get('/client-services', [ServiceController::class, 'clientServices']);
 Route::get('/services/{service}', [ServiceController::class, 'show']);
 
 Route::apiResource('staffs', StaffProfileController::class)->only('index', 'show');
@@ -179,7 +179,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
         Route::apiResource('categories', CategoryController::class)->except('index');
 
-        Route::apiResource('services', ServiceController::class)->except('index', 'show');
+        Route::apiResource('services', ServiceController::class)->except('show');
 
         Route::apiResource('staffs', StaffProfileController::class)->except('index', 'show');;
 

@@ -57,5 +57,27 @@ class StaffProfileSeeder extends Seeder
 
             $profile2->categories()->attach($categoryIds);
         }
+
+        $staff3 = User::where('email', 'staff12345@gmail.com')->first();
+
+        if ($staff3) {
+            $profile3 = StaffProfile::create([
+                'user_id' => $staff3->id,
+                'position' => 'Spa & Wellness Specialist',
+                'avg_rating' => 4.6,
+                'experience' => 4,
+                'bio' => 'Skilled spa and wellness professional providing relaxing treatments and personalized beauty care.',
+                'is_active' => true,
+            ]);
+
+            $categoryIds = Category::whereNull('parent_id')
+                ->whereIn('name', [
+                    'Spa',
+                    'Hair',
+                ])
+                ->pluck('id');
+
+            $profile3->categories()->sync($categoryIds);
+        }
     }
 }

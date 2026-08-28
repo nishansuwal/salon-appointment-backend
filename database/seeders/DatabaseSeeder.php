@@ -57,7 +57,13 @@ class DatabaseSeeder extends Seeder
             'phone' => '1234567890',
             'role' => 'staff',
         ]);
-        User::factory(10)->create();
+        User::factory()->create([
+            'name' => 'Staff3',
+            'email' => 'staff12345@gmail.com',
+            'password' => bcrypt('staff123'),
+            'phone' => '1234567890',
+            'role' => 'staff',
+        ]);
 
         $this->call([
             CategorySeeder::class,

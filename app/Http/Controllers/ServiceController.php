@@ -152,4 +152,82 @@ class ServiceController extends AbstractCrudController
             }
         }
     }
+
+    public function clientServices(Request $request)
+    {
+        $pageSize = (int) $request->input('pageSize', 12);
+        $searchValue = $request->input('searchValue');
+        $categoryId = $request->input('categoryId');
+        $minPrice = $request->input('minPrice');
+        $maxPrice = $request->input('maxPrice');
+
+        $sortBy = $request->input('sortBy', 'latest');
+
+        $with = [
+            'category:id,parent_id,name,level',
+            'category.staff:id,user_id,position,is_active',
+            'images',
+        ];
+
+        $query = Service::query()
+            ->with($with)
+            ->where('status', 'active');
+
+        if (!empty($searchValue)) {
+            $query->where(function ($q) use ($searchValue) {
+                $q->where('name', 'like', "%{$searchValue}%")
+                    ->orWhere('description', 'like', "%{$searchValue}%");
+            });
+        }
+
+        if (!empty($categoryId)) {
+            $query->where('category_id', $categoryId);
+        }
+
+        if ($minPrice !== null && $minPrice !== '') {
+            $query->where('price', '>=', $minPrice);
+        }
+
+        if ($maxPrice !== null && $maxPrice !== '') {
+            $query->where('price', '<=', $maxPrice);
+        }
+
+        switch ($sortBy) {
+
+            case 'latest':
+                $query->latest();
+                break;
+
+            case 'oldest':
+                $query->oldest();
+                break;
+
+            case 'price_high':
+                $query->orderBy('price', 'desc');
+                break;
+
+            case 'price_low':
+                $query->orderBy('price', 'asc');
+                break;
+
+            case 'discount_high':
+                $query->orderBy('discount', 'desc');
+                break;
+
+            case 'discount_low':
+                $query->orderBy('discount', 'asc');
+                break;
+
+            default:
+                $query->latest();
+                break;
+        }
+
+        $services = $query->paginate($pageSize);
+
+        return $this->successResponse(
+            $services,
+            'Services retrieved successfully'
+        );
+    }
 }

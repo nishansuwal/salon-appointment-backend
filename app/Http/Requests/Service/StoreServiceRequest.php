@@ -32,6 +32,8 @@ class StoreServiceRequest extends FormRequest
             'slug' => 'required|string|max:255|unique:services,slug',
             'duration_minutes' => 'nullable|integer|min:1',
             'price' => 'nullable|numeric|min:0',
+            'discount' => 'nullable|numeric|min:0',
+            'status' => 'sometimes|in:active,inactive',
 
             'images' => 'nullable|array',
             'images.*' => 'image|mimes:jpg,jpeg,png,webp|max:2048',
