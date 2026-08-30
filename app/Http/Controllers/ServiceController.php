@@ -10,6 +10,7 @@ use App\Http\Traits\HandlesImagesTrait;
 use App\Http\Traits\ApiResponseTrait;
 use Illuminate\Http\Request;
 use App\Models\Service;
+use App\Models\Review;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
@@ -158,6 +159,7 @@ class ServiceController extends AbstractCrudController
         $pageSize = (int) $request->input('pageSize', 12);
         $searchValue = $request->input('searchValue');
         $categoryId = $request->input('categoryId');
+        $staffId = $request->input('staffId');
         $minPrice = $request->input('minPrice');
         $maxPrice = $request->input('maxPrice');
 
@@ -165,6 +167,8 @@ class ServiceController extends AbstractCrudController
 
         $with = [
             'category:id,parent_id,name,level',
+            'category.parent:id,parent_id,name,level',
+            'category.parent.staff:id,user_id,position,is_active',
             'category.staff:id,user_id,position,is_active',
             'images',
         ];
@@ -181,7 +185,20 @@ class ServiceController extends AbstractCrudController
         }
 
         if (!empty($categoryId)) {
-            $query->where('category_id', $categoryId);
+            $query->whereHas('category', function ($q) use ($categoryId) {
+                $q->where('parent_id', $categoryId);
+            });
+        }
+
+        if (!empty($staffId)) {
+            $query->where(function ($q) use ($staffId) {
+                $q->whereHas('category.parent.staff', function ($q) use ($staffId) {
+                    $q->where('staff_profiles.id', $staffId);
+                })
+                    ->orWhereHas('category.staff', function ($q) use ($staffId) {
+                        $q->where('staff_profiles.id', $staffId);
+                    });
+            });
         }
 
         if ($minPrice !== null && $minPrice !== '') {
@@ -229,5 +246,61 @@ class ServiceController extends AbstractCrudController
             $services,
             'Services retrieved successfully'
         );
+    }
+
+    public function getServiceBySlug(string $slug)
+    {
+        $service = Service::with([
+            'category:id,parent_id,name,level',
+            'category.parent:id,name,level',
+            'images',
+        ])
+            ->where('slug', $slug)
+            ->where('status', 'active')
+            ->first();
+
+        if (!$service) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Service not found.',
+            ], 404);
+        }
+
+        $parentCategoryId = $service->category?->parent_id;
+
+        $relatedServices = collect();
+
+        if ($parentCategoryId) {
+            $relatedServices = Service::with([
+                'category:id,parent_id,name,level',
+                'images',
+            ])
+                ->where('id', '!=', $service->id)
+                ->where('status', 'active')
+                ->whereHas('category', function ($query) use ($parentCategoryId) {
+                    $query->where('parent_id', $parentCategoryId);
+                })
+                ->latest()
+                ->get();
+        }
+
+        $reviews = Review::with(['user:id,name'])
+            ->where('status', 'approved')
+            ->whereHas('appointmentService.service', function ($query) use ($service) {
+                $query->where('service_id', $service->id);
+            })
+            ->latest()
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Service fetched successfully.',
+            'data' => [
+                'service' => $service,
+                'staffs' => $service->category?->parent?->staff ?? collect(),
+                'related_services' => $relatedServices,
+                'reviews' => $reviews,
+            ],
+        ]);
     }
 }
